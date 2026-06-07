@@ -1,0 +1,1 @@
+import{j as r}from"./react-vendor-8zYVP86P.js";import{C as t,c as s}from"./index-D261m1pd.js";import"./vendor-C-UA95kO.js";import"./router-D8aZx666.js";import"./icons-BLmnhXeQ.js";function e(){return r.jsx(t,{"code-path":"src/pages/Culture.tsx:5:10",pages:[s],basePath:"/culture",category:"术数文化"})}export{e as default};
