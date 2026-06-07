@@ -264,7 +264,7 @@ var require_postgres_interval = __commonJS({
       if (!(this instanceof PostgresInterval)) {
         return new PostgresInterval(raw2);
       }
-      extend2(this, parse4(raw2));
+      extend2(this, parse6(raw2));
     }
     var properties = ["seconds", "minutes", "hours", "days", "months", "years"];
     PostgresInterval.prototype.toPostgres = function() {
@@ -325,7 +325,7 @@ var require_postgres_interval = __commonJS({
       var microseconds = fraction + "000000".slice(fraction.length);
       return parseInt(microseconds, 10) / 1e3;
     }
-    function parse4(interval2) {
+    function parse6(interval2) {
       if (!interval2) return {};
       var matches = INTERVAL.exec(interval2);
       var isNegative = matches[8] === "-";
@@ -812,13 +812,13 @@ var require_binaryParsers = __commonJS({
           console.log("ERROR: ElementType not implemented: " + elementType2);
         }
       };
-      var parse4 = function(dimension, elementType2) {
+      var parse6 = function(dimension, elementType2) {
         var array2 = [];
         var i2;
         if (dimension.length > 1) {
           var count = dimension.shift();
           for (i2 = 0; i2 < count; i2++) {
-            array2[i2] = parse4(dimension, elementType2);
+            array2[i2] = parse6(dimension, elementType2);
           }
           dimension.unshift(count);
         } else {
@@ -828,7 +828,7 @@ var require_binaryParsers = __commonJS({
         }
         return array2;
       };
-      return parse4(dims, elementType);
+      return parse6(dims, elementType);
     };
     var parseText = function(value) {
       return value.toString("utf8");
@@ -1573,7 +1573,7 @@ var require_type_overrides = __commonJS({
 var require_pg_connection_string = __commonJS({
   "node_modules/pg-connection-string/index.js"(exports, module) {
     "use strict";
-    function parse4(str, options = {}) {
+    function parse6(str, options = {}) {
       if (str.charAt(0) === "/") {
         const config3 = str.split(" ");
         return { host: config3[0], database: config3[1] };
@@ -1732,7 +1732,7 @@ var require_pg_connection_string = __commonJS({
       return poolConfig;
     }
     function parseIntoClientConfig(str) {
-      return toClientConfig(parse4(str));
+      return toClientConfig(parse6(str));
     }
     function deprecatedSslModeWarning(sslmode) {
       if (!deprecatedSslModeWarning.warned && typeof process !== "undefined" && process.emitWarning) {
@@ -1747,10 +1747,10 @@ To prepare for this change:
 See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode definitions.`);
       }
     }
-    module.exports = parse4;
-    parse4.parse = parse4;
-    parse4.toClientConfig = toClientConfig;
-    parse4.parseIntoClientConfig = parseIntoClientConfig;
+    module.exports = parse6;
+    parse6.parse = parse6;
+    parse6.toClientConfig = toClientConfig;
+    parse6.parseIntoClientConfig = parseIntoClientConfig;
   }
 });
 
@@ -1760,7 +1760,7 @@ var require_connection_parameters = __commonJS({
     "use strict";
     var dns = __require("dns");
     var defaults2 = require_defaults();
-    var parse4 = require_pg_connection_string().parse;
+    var parse6 = require_pg_connection_string().parse;
     var val = function(key, config2, envVar) {
       if (config2[key]) {
         return config2[key];
@@ -1798,9 +1798,9 @@ var require_connection_parameters = __commonJS({
     };
     var ConnectionParameters = class {
       constructor(config2) {
-        config2 = typeof config2 === "string" ? parse4(config2) : config2 || {};
+        config2 = typeof config2 === "string" ? parse6(config2) : config2 || {};
         if (config2.connectionString) {
-          config2 = Object.assign({}, config2, parse4(config2.connectionString));
+          config2 = Object.assign({}, config2, parse6(config2.connectionString));
         }
         this.user = val("user", config2);
         this.database = val("database", config2);
@@ -2479,7 +2479,7 @@ var require_serializer = __commonJS({
       );
     };
     var emptyArray = [];
-    var parse4 = (query2) => {
+    var parse6 = (query2) => {
       const name = query2.name || "";
       if (name.length > 63) {
         console.error("Warning! Postgres only supports 63 characters for query names.");
@@ -2622,14 +2622,14 @@ var require_serializer = __commonJS({
       99
       /* code.copyDone */
     );
-    var serialize2 = {
+    var serialize4 = {
       startup,
       password,
       requestSsl,
       sendSASLInitialResponseMessage,
       sendSCRAMClientFinalMessage,
       query,
-      parse: parse4,
+      parse: parse6,
       bind,
       execute,
       describe: describe3,
@@ -2642,7 +2642,7 @@ var require_serializer = __commonJS({
       copyFail,
       cancel
     };
-    exports.serialize = serialize2;
+    exports.serialize = serialize4;
   }
 });
 
@@ -3027,12 +3027,12 @@ var require_dist = __commonJS({
       return serializer_1.serialize;
     } });
     var parser_1 = require_parser();
-    function parse4(stream, callback) {
+    function parse6(stream, callback) {
       const parser = new parser_1.Parser();
       stream.on("data", (buffer) => parser.parse(buffer, callback));
       return new Promise((resolve) => stream.on("end", () => resolve()));
     }
-    exports.parse = parse4;
+    exports.parse = parse6;
   }
 });
 
@@ -3116,11 +3116,11 @@ var require_connection = __commonJS({
   "node_modules/pg/lib/connection.js"(exports, module) {
     "use strict";
     var EventEmitter = __require("events").EventEmitter;
-    var { parse: parse4, serialize: serialize2 } = require_dist();
+    var { parse: parse6, serialize: serialize4 } = require_dist();
     var { getStream, getSecureStream } = require_stream();
-    var flushBuffer = serialize2.flush();
-    var syncBuffer = serialize2.sync();
-    var endBuffer = serialize2.end();
+    var flushBuffer = serialize4.flush();
+    var syncBuffer = serialize4.sync();
+    var endBuffer = serialize4.end();
     var Connection2 = class extends EventEmitter {
       constructor(config2) {
         super();
@@ -3202,7 +3202,7 @@ var require_connection = __commonJS({
         });
       }
       attachListeners(stream) {
-        parse4(stream, (msg) => {
+        parse6(stream, (msg) => {
           const eventName = msg.name === "error" ? "errorMessage" : msg.name;
           if (this._emitMessage) {
             this.emit("message", msg);
@@ -3211,22 +3211,22 @@ var require_connection = __commonJS({
         });
       }
       requestSsl() {
-        this.stream.write(serialize2.requestSsl());
+        this.stream.write(serialize4.requestSsl());
       }
       startup(config2) {
-        this.stream.write(serialize2.startup(config2));
+        this.stream.write(serialize4.startup(config2));
       }
       cancel(processID, secretKey) {
-        this._send(serialize2.cancel(processID, secretKey));
+        this._send(serialize4.cancel(processID, secretKey));
       }
       password(password) {
-        this._send(serialize2.password(password));
+        this._send(serialize4.password(password));
       }
       sendSASLInitialResponseMessage(mechanism, initialResponse) {
-        this._send(serialize2.sendSASLInitialResponseMessage(mechanism, initialResponse));
+        this._send(serialize4.sendSASLInitialResponseMessage(mechanism, initialResponse));
       }
       sendSCRAMClientFinalMessage(additionalData) {
-        this._send(serialize2.sendSCRAMClientFinalMessage(additionalData));
+        this._send(serialize4.sendSCRAMClientFinalMessage(additionalData));
       }
       _send(buffer) {
         if (!this.stream.writable) {
@@ -3235,19 +3235,19 @@ var require_connection = __commonJS({
         return this.stream.write(buffer);
       }
       query(text2) {
-        this._send(serialize2.query(text2));
+        this._send(serialize4.query(text2));
       }
       // send parse message
       parse(query) {
-        this._send(serialize2.parse(query));
+        this._send(serialize4.parse(query));
       }
       // send bind message
       bind(config2) {
-        this._send(serialize2.bind(config2));
+        this._send(serialize4.bind(config2));
       }
       // send execute message
       execute(config2) {
-        this._send(serialize2.execute(config2));
+        this._send(serialize4.execute(config2));
       }
       flush() {
         if (this.stream.writable) {
@@ -3275,19 +3275,19 @@ var require_connection = __commonJS({
         });
       }
       close(msg) {
-        this._send(serialize2.close(msg));
+        this._send(serialize4.close(msg));
       }
       describe(msg) {
-        this._send(serialize2.describe(msg));
+        this._send(serialize4.describe(msg));
       }
       sendCopyFromChunk(chunk) {
-        this._send(serialize2.copyData(chunk));
+        this._send(serialize4.copyData(chunk));
       }
       endCopyFrom() {
-        this._send(serialize2.copyDone());
+        this._send(serialize4.copyDone());
       }
       sendCopyFail(msg) {
-        this._send(serialize2.copyFail(msg));
+        this._send(serialize4.copyFail(msg));
       }
     };
     module.exports = Connection2;
@@ -5158,7 +5158,7 @@ var require_main = __commonJS({
       return supportsAnsi() ? `\x1B[2m${text2}\x1B[0m` : text2;
     }
     var LINE = /(?:^|^)\s*(?:export\s+)?([\w.-]+)(?:\s*=\s*?|:\s+?)(\s*'(?:\\'|[^'])*'|\s*"(?:\\"|[^"])*"|\s*`(?:\\`|[^`])*`|[^#\r\n]+)?\s*(?:#.*)?(?:$|$)/mg;
-    function parse4(src) {
+    function parse6(src) {
       const obj = {};
       let lines = src.toString();
       lines = lines.replace(/\r\n?/mg, "\n");
@@ -5430,7 +5430,7 @@ var require_main = __commonJS({
       _parseVault,
       config: config2,
       decrypt,
-      parse: parse4,
+      parse: parse6,
       populate
     };
     module.exports.configDotenv = DotenvModule.configDotenv;
@@ -5487,6 +5487,255 @@ var require_cli_options = __commonJS({
       }
       return options;
     };
+  }
+});
+
+// node_modules/cookie/dist/index.js
+var require_dist2 = __commonJS({
+  "node_modules/cookie/dist/index.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.parseCookie = parseCookie;
+    exports.parse = parseCookie;
+    exports.stringifyCookie = stringifyCookie;
+    exports.stringifySetCookie = stringifySetCookie;
+    exports.serialize = stringifySetCookie;
+    exports.parseSetCookie = parseSetCookie;
+    exports.stringifySetCookie = stringifySetCookie;
+    exports.serialize = stringifySetCookie;
+    var cookieNameRegExp = /^[\u0021-\u003A\u003C\u003E-\u007E]+$/;
+    var cookieValueRegExp = /^[\u0021-\u003A\u003C-\u007E]*$/;
+    var domainValueRegExp = /^([.]?[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)([.][a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)*$/i;
+    var pathValueRegExp = /^[\u0020-\u003A\u003D-\u007E]*$/;
+    var maxAgeRegExp = /^-?\d+$/;
+    var __toString = Object.prototype.toString;
+    var NullObject = /* @__PURE__ */ (() => {
+      const C = function() {
+      };
+      C.prototype = /* @__PURE__ */ Object.create(null);
+      return C;
+    })();
+    function parseCookie(str, options) {
+      const obj = new NullObject();
+      const len = str.length;
+      if (len < 2)
+        return obj;
+      const dec = options?.decode || decode4;
+      let index = 0;
+      do {
+        const eqIdx = eqIndex(str, index, len);
+        if (eqIdx === -1)
+          break;
+        const endIdx = endIndex(str, index, len);
+        if (eqIdx > endIdx) {
+          index = str.lastIndexOf(";", eqIdx - 1) + 1;
+          continue;
+        }
+        const key = valueSlice(str, index, eqIdx);
+        if (obj[key] === void 0) {
+          obj[key] = dec(valueSlice(str, eqIdx + 1, endIdx));
+        }
+        index = endIdx + 1;
+      } while (index < len);
+      return obj;
+    }
+    function stringifyCookie(cookie3, options) {
+      const enc = options?.encode || encodeURIComponent;
+      const cookieStrings = [];
+      for (const name of Object.keys(cookie3)) {
+        const val = cookie3[name];
+        if (val === void 0)
+          continue;
+        if (!cookieNameRegExp.test(name)) {
+          throw new TypeError(`cookie name is invalid: ${name}`);
+        }
+        const value = enc(val);
+        if (!cookieValueRegExp.test(value)) {
+          throw new TypeError(`cookie val is invalid: ${val}`);
+        }
+        cookieStrings.push(`${name}=${value}`);
+      }
+      return cookieStrings.join("; ");
+    }
+    function stringifySetCookie(_name, _val, _opts) {
+      const cookie3 = typeof _name === "object" ? _name : { ..._opts, name: _name, value: String(_val) };
+      const options = typeof _val === "object" ? _val : _opts;
+      const enc = options?.encode || encodeURIComponent;
+      if (!cookieNameRegExp.test(cookie3.name)) {
+        throw new TypeError(`argument name is invalid: ${cookie3.name}`);
+      }
+      const value = cookie3.value ? enc(cookie3.value) : "";
+      if (!cookieValueRegExp.test(value)) {
+        throw new TypeError(`argument val is invalid: ${cookie3.value}`);
+      }
+      let str = cookie3.name + "=" + value;
+      if (cookie3.maxAge !== void 0) {
+        if (!Number.isInteger(cookie3.maxAge)) {
+          throw new TypeError(`option maxAge is invalid: ${cookie3.maxAge}`);
+        }
+        str += "; Max-Age=" + cookie3.maxAge;
+      }
+      if (cookie3.domain) {
+        if (!domainValueRegExp.test(cookie3.domain)) {
+          throw new TypeError(`option domain is invalid: ${cookie3.domain}`);
+        }
+        str += "; Domain=" + cookie3.domain;
+      }
+      if (cookie3.path) {
+        if (!pathValueRegExp.test(cookie3.path)) {
+          throw new TypeError(`option path is invalid: ${cookie3.path}`);
+        }
+        str += "; Path=" + cookie3.path;
+      }
+      if (cookie3.expires) {
+        if (!isDate2(cookie3.expires) || !Number.isFinite(cookie3.expires.valueOf())) {
+          throw new TypeError(`option expires is invalid: ${cookie3.expires}`);
+        }
+        str += "; Expires=" + cookie3.expires.toUTCString();
+      }
+      if (cookie3.httpOnly) {
+        str += "; HttpOnly";
+      }
+      if (cookie3.secure) {
+        str += "; Secure";
+      }
+      if (cookie3.partitioned) {
+        str += "; Partitioned";
+      }
+      if (cookie3.priority) {
+        const priority = typeof cookie3.priority === "string" ? cookie3.priority.toLowerCase() : void 0;
+        switch (priority) {
+          case "low":
+            str += "; Priority=Low";
+            break;
+          case "medium":
+            str += "; Priority=Medium";
+            break;
+          case "high":
+            str += "; Priority=High";
+            break;
+          default:
+            throw new TypeError(`option priority is invalid: ${cookie3.priority}`);
+        }
+      }
+      if (cookie3.sameSite) {
+        const sameSite = typeof cookie3.sameSite === "string" ? cookie3.sameSite.toLowerCase() : cookie3.sameSite;
+        switch (sameSite) {
+          case true:
+          case "strict":
+            str += "; SameSite=Strict";
+            break;
+          case "lax":
+            str += "; SameSite=Lax";
+            break;
+          case "none":
+            str += "; SameSite=None";
+            break;
+          default:
+            throw new TypeError(`option sameSite is invalid: ${cookie3.sameSite}`);
+        }
+      }
+      return str;
+    }
+    function parseSetCookie(str, options) {
+      const dec = options?.decode || decode4;
+      const len = str.length;
+      const endIdx = endIndex(str, 0, len);
+      const eqIdx = eqIndex(str, 0, endIdx);
+      const setCookie2 = eqIdx === -1 ? { name: "", value: dec(valueSlice(str, 0, endIdx)) } : {
+        name: valueSlice(str, 0, eqIdx),
+        value: dec(valueSlice(str, eqIdx + 1, endIdx))
+      };
+      let index = endIdx + 1;
+      while (index < len) {
+        const endIdx2 = endIndex(str, index, len);
+        const eqIdx2 = eqIndex(str, index, endIdx2);
+        const attr = eqIdx2 === -1 ? valueSlice(str, index, endIdx2) : valueSlice(str, index, eqIdx2);
+        const val = eqIdx2 === -1 ? void 0 : valueSlice(str, eqIdx2 + 1, endIdx2);
+        switch (attr.toLowerCase()) {
+          case "httponly":
+            setCookie2.httpOnly = true;
+            break;
+          case "secure":
+            setCookie2.secure = true;
+            break;
+          case "partitioned":
+            setCookie2.partitioned = true;
+            break;
+          case "domain":
+            setCookie2.domain = val;
+            break;
+          case "path":
+            setCookie2.path = val;
+            break;
+          case "max-age":
+            if (val && maxAgeRegExp.test(val))
+              setCookie2.maxAge = Number(val);
+            break;
+          case "expires":
+            if (!val)
+              break;
+            const date6 = new Date(val);
+            if (Number.isFinite(date6.valueOf()))
+              setCookie2.expires = date6;
+            break;
+          case "priority":
+            if (!val)
+              break;
+            const priority = val.toLowerCase();
+            if (priority === "low" || priority === "medium" || priority === "high") {
+              setCookie2.priority = priority;
+            }
+            break;
+          case "samesite":
+            if (!val)
+              break;
+            const sameSite = val.toLowerCase();
+            if (sameSite === "lax" || sameSite === "strict" || sameSite === "none") {
+              setCookie2.sameSite = sameSite;
+            }
+            break;
+        }
+        index = endIdx2 + 1;
+      }
+      return setCookie2;
+    }
+    function endIndex(str, min, len) {
+      const index = str.indexOf(";", min);
+      return index === -1 ? len : index;
+    }
+    function eqIndex(str, min, max) {
+      const index = str.indexOf("=", min);
+      return index < max ? index : -1;
+    }
+    function valueSlice(str, min, max) {
+      let start = min;
+      let end = max;
+      do {
+        const code = str.charCodeAt(start);
+        if (code !== 32 && code !== 9)
+          break;
+      } while (++start < end);
+      while (end > start) {
+        const code = str.charCodeAt(end - 1);
+        if (code !== 32 && code !== 9)
+          break;
+        end--;
+      }
+      return str.slice(start, end);
+    }
+    function decode4(str) {
+      if (str.indexOf("%") === -1)
+        return str;
+      try {
+        return decodeURIComponent(str);
+      } catch (e) {
+        return str;
+      }
+    }
+    function isDate2(val) {
+      return __toString.call(val) === "[object Date]";
+    }
   }
 });
 
@@ -7218,8 +7467,8 @@ var Context = class {
         if (k === "set-cookie") {
           const cookies = this.#res.headers.getSetCookie();
           _res.headers.delete("set-cookie");
-          for (const cookie of cookies) {
-            _res.headers.append("set-cookie", cookie);
+          for (const cookie3 of cookies) {
+            _res.headers.append("set-cookie", cookie3);
           }
         } else {
           _res.headers.set(k, v);
@@ -10262,10 +10511,10 @@ function _createBatchStreamProducer() {
 }
 function jsonlStreamProducer(opts) {
   let stream = readableStreamFrom(createBatchStreamProducer(opts));
-  const { serialize: serialize2 } = opts;
-  if (serialize2) stream = stream.pipeThrough(new TransformStream({ transform(chunk, controller) {
+  const { serialize: serialize4 } = opts;
+  if (serialize4) stream = stream.pipeThrough(new TransformStream({ transform(chunk, controller) {
     if (chunk === PING_SYM) controller.enqueue(PING_SYM);
-    else controller.enqueue(serialize2(chunk));
+    else controller.enqueue(serialize4(chunk));
   } }));
   return stream.pipeThrough(new TransformStream({ transform(chunk, controller) {
     if (chunk === PING_SYM) controller.enqueue(" ");
@@ -10308,7 +10557,7 @@ var CONNECTED_EVENT = "connected";
 var RETURN_EVENT = "return";
 function sseStreamProducer(opts) {
   var _opts$ping$enabled, _opts$ping, _opts$ping$intervalMs, _opts$ping2, _opts$client;
-  const { serialize: serialize2 = identity } = opts;
+  const { serialize: serialize4 = identity } = opts;
   const ping = {
     enabled: (_opts$ping$enabled = (_opts$ping = opts.ping) === null || _opts$ping === void 0 ? void 0 : _opts$ping.enabled) !== null && _opts$ping$enabled !== void 0 ? _opts$ping$enabled : false,
     intervalMs: (_opts$ping$intervalMs = (_opts$ping2 = opts.ping) === null || _opts$ping2 === void 0 ? void 0 : _opts$ping2.intervalMs) !== null && _opts$ping$intervalMs !== void 0 ? _opts$ping$intervalMs : 1e3
@@ -10350,7 +10599,7 @@ function sseStreamProducer(opts) {
               id: value[0],
               data: value[1]
             } : { data: value };
-            chunk.data = JSON.stringify(serialize2(chunk.data));
+            chunk.data = JSON.stringify(serialize4(chunk.data));
             yield chunk;
             value = null;
             chunk = null;
@@ -10387,7 +10636,7 @@ function sseStreamProducer(opts) {
         const data = (_opts$formatError = (_opts$formatError2 = opts.formatError) === null || _opts$formatError2 === void 0 ? void 0 : _opts$formatError2.call(opts, { error: error48 })) !== null && _opts$formatError !== void 0 ? _opts$formatError : null;
         yield {
           event: SERIALIZED_ERROR_EVENT,
-          data: JSON.stringify(serialize2(data))
+          data: JSON.stringify(serialize4(data))
         };
       }
     });
@@ -10899,6 +11148,20 @@ async function fetchRequestHandler(opts) {
   }));
 }
 
+// contracts/constants.ts
+var Session = {
+  cookieName: "kimi_sid",
+  maxAgeMs: 365 * 24 * 60 * 60 * 1e3
+};
+var ErrorMessages = {
+  unauthenticated: "Authentication required",
+  insufficientRole: "Insufficient permissions"
+};
+var Paths = {
+  login: "/login",
+  oauthCallback: "/api/oauth/callback"
+};
+
 // node_modules/@trpc/server/dist/initTRPC-BRf4imah.mjs
 var import_objectSpread2$2 = __toESM2(require_objectSpread2(), 1);
 var middlewareMarker = "middlewareMarker";
@@ -10917,12 +11180,12 @@ function createMiddlewareFactory() {
   }
   return createMiddleware;
 }
-function createInputMiddleware(parse4) {
+function createInputMiddleware(parse6) {
   const inputMiddleware = async function inputValidatorMiddleware(opts) {
     let parsedInput;
     const rawInput = await opts.getRawInput();
     try {
-      parsedInput = await parse4(rawInput);
+      parsedInput = await parse6(rawInput);
     } catch (cause) {
       throw new TRPCError({
         code: "BAD_REQUEST",
@@ -10935,12 +11198,12 @@ function createInputMiddleware(parse4) {
   inputMiddleware._type = "input";
   return inputMiddleware;
 }
-function createOutputMiddleware(parse4) {
+function createOutputMiddleware(parse6) {
   const outputMiddleware = async function outputValidatorMiddleware({ next }) {
     const result = await next();
     if (!result.ok) return result;
     try {
-      const data = await parse4(result.data);
+      const data = await parse6(result.data);
       return (0, import_objectSpread2$2.default)((0, import_objectSpread2$2.default)({}, result), {}, { data });
     } catch (cause) {
       throw new TRPCError({
@@ -12014,6 +12277,30 @@ var t = initTRPC.context().create({
 });
 var createRouter = t.router;
 var publicQuery = t.procedure;
+var requireAuth = t.middleware(async (opts) => {
+  const { ctx, next } = opts;
+  if (!ctx.user) {
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message: ErrorMessages.unauthenticated
+    });
+  }
+  return next({ ctx: { ...ctx, user: ctx.user } });
+});
+function requireRole(role) {
+  return t.middleware(async (opts) => {
+    const { ctx, next } = opts;
+    if (!ctx.user || ctx.user.role !== role) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: ErrorMessages.insufficientRole
+      });
+    }
+    return next({ ctx: { ...ctx, user: ctx.user } });
+  });
+}
+var authedQuery = t.procedure.use(requireAuth);
+var adminQuery = authedQuery.use(requireRole("admin"));
 
 // node_modules/zod/v4/classic/external.js
 var external_exports = {};
@@ -12162,7 +12449,7 @@ __export(external_exports, {
   jwt: () => jwt,
   keyof: () => keyof,
   ksuid: () => ksuid2,
-  lazy: () => lazy,
+  lazy: () => lazy2,
   length: () => _length,
   literal: () => literal,
   locales: () => locales_exports,
@@ -23994,7 +24281,7 @@ __export(schemas_exports2, {
   jwt: () => jwt,
   keyof: () => keyof,
   ksuid: () => ksuid2,
-  lazy: () => lazy,
+  lazy: () => lazy2,
   literal: () => literal,
   looseObject: () => looseObject,
   looseRecord: () => looseRecord,
@@ -25164,7 +25451,7 @@ var ZodLazy = /* @__PURE__ */ $constructor("ZodLazy", (inst, def) => {
   inst._zod.processJSONSchema = (ctx, json3, params) => lazyProcessor(inst, ctx, json3, params);
   inst.unwrap = () => inst._zod.def.getter();
 });
-function lazy(getter) {
+function lazy2(getter) {
   return new ZodLazy({
     type: "lazy",
     getter
@@ -25246,7 +25533,7 @@ var stringbool = (...args) => _stringbool({
   String: ZodString
 }, ...args);
 function json(params) {
-  const jsonSchema = lazy(() => {
+  const jsonSchema = lazy2(() => {
     return union([string2(params), number2(), boolean2(), _null3(), array(jsonSchema), record(string2(), jsonSchema)]);
   });
   return jsonSchema;
@@ -29092,6 +29379,17 @@ function extractTablesRelationalConfig(schema, configHelpers) {
   }
   return { tables: tablesConfig, tableNamesMap };
 }
+function relations(table, relations2) {
+  return new Relations(
+    table,
+    (helpers) => Object.fromEntries(
+      Object.entries(relations2(helpers)).map(([key, value]) => [
+        key,
+        value.withFieldName(key)
+      ])
+    )
+  );
+}
 function createOne(sourceTable) {
   return function one(table, config2) {
     return new One(
@@ -32765,13 +33063,19 @@ var env = {
   appId: required2("APP_ID"),
   appSecret: required2("APP_SECRET"),
   isProduction: process.env.NODE_ENV === "production",
-  databaseUrl: required2("DATABASE_URL")
+  databaseUrl: required2("DATABASE_URL"),
+  kimiAuthUrl: required2("KIMI_AUTH_URL"),
+  kimiOpenUrl: required2("KIMI_OPEN_URL"),
+  ownerUnionId: process.env.OWNER_UNION_ID ?? ""
 };
 
 // db/schema.ts
 var schema_exports = {};
 __export(schema_exports, {
+  aiChats: () => aiChats,
+  apiKeys: () => apiKeys,
   comments: () => comments,
+  mianxiangRecords: () => mianxiangRecords,
   posts: () => posts,
   records: () => records,
   users: () => users
@@ -32803,6 +33107,29 @@ var comments = pgTable("comments", {
   content: text("content").notNull(),
   createdAt: timestamp("created_at").notNull().defaultNow()
 });
+var apiKeys = pgTable("api_keys", {
+  id: serial("id").primaryKey(),
+  userId: integer2("user_id").notNull(),
+  provider: varchar("provider", { length: 50 }).notNull().default("siliconflow"),
+  key: text("key").notNull(),
+  isActive: integer2("is_active").notNull().default(1),
+  createdAt: timestamp("created_at").notNull().defaultNow()
+});
+var aiChats = pgTable("ai_chats", {
+  id: serial("id").primaryKey(),
+  userId: integer2("user_id").notNull(),
+  toolType: varchar("tool_type", { length: 50 }).notNull(),
+  recordId: integer2("record_id"),
+  messages: jsonb("messages").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow()
+});
+var mianxiangRecords = pgTable("mianxiang_records", {
+  id: serial("id").primaryKey(),
+  userId: integer2("user_id").notNull(),
+  mode: varchar("mode", { length: 20 }).notNull(),
+  messages: jsonb("messages").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow()
+});
 var records = pgTable("records", {
   id: serial("id").primaryKey(),
   userId: integer2("user_id").notNull(),
@@ -32814,6 +33141,15 @@ var records = pgTable("records", {
 
 // db/relations.ts
 var relations_exports = {};
+__export(relations_exports, {
+  usersRelations: () => usersRelations
+});
+var usersRelations = relations(users, ({ many }) => ({
+  apiKeys: many(apiKeys),
+  records: many(records),
+  aiChats: many(aiChats),
+  mianxiangRecords: many(mianxiangRecords)
+}));
 
 // api/queries/connection.ts
 var fullSchema = { ...schema_exports, ...relations_exports };
@@ -34795,6 +35131,32 @@ var JWTInvalid = class extends JOSEError {
   static code = "ERR_JWT_INVALID";
   code = "ERR_JWT_INVALID";
 };
+var JWKSInvalid = class extends JOSEError {
+  static code = "ERR_JWKS_INVALID";
+  code = "ERR_JWKS_INVALID";
+};
+var JWKSNoMatchingKey = class extends JOSEError {
+  static code = "ERR_JWKS_NO_MATCHING_KEY";
+  code = "ERR_JWKS_NO_MATCHING_KEY";
+  constructor(message2 = "no applicable key found in the JSON Web Key Set", options) {
+    super(message2, options);
+  }
+};
+var JWKSMultipleMatchingKeys = class extends JOSEError {
+  [Symbol.asyncIterator];
+  static code = "ERR_JWKS_MULTIPLE_MATCHING_KEYS";
+  code = "ERR_JWKS_MULTIPLE_MATCHING_KEYS";
+  constructor(message2 = "multiple matching keys found in the JSON Web Key Set", options) {
+    super(message2, options);
+  }
+};
+var JWKSTimeout = class extends JOSEError {
+  static code = "ERR_JWKS_TIMEOUT";
+  code = "ERR_JWKS_TIMEOUT";
+  constructor(message2 = "request timed out", options) {
+    super(message2, options);
+  }
+};
 var JWSSignatureVerificationFailed = class extends JOSEError {
   static code = "ERR_JWS_SIGNATURE_VERIFICATION_FAILED";
   code = "ERR_JWS_SIGNATURE_VERIFICATION_FAILED";
@@ -35204,6 +35566,42 @@ async function normalizeKey(key, alg) {
     return handleJWK(key, key, alg, true);
   }
   throw new Error("unreachable");
+}
+
+// node_modules/jose/dist/webapi/key/import.js
+async function importJWK(jwk, alg, options) {
+  if (!isObject3(jwk)) {
+    throw new TypeError("JWK must be an object");
+  }
+  let ext;
+  alg ??= jwk.alg;
+  ext ??= options?.extractable ?? jwk.ext;
+  switch (jwk.kty) {
+    case "oct":
+      if (typeof jwk.k !== "string" || !jwk.k) {
+        throw new TypeError('missing "k" (Key Value) Parameter value');
+      }
+      return decode3(jwk.k);
+    case "RSA":
+      if ("oth" in jwk && jwk.oth !== void 0) {
+        throw new JOSENotSupported('RSA JWK "oth" (Other Primes Info) Parameter value is not supported');
+      }
+      return jwkToKey({ ...jwk, alg, ext });
+    case "AKP": {
+      if (typeof jwk.alg !== "string" || !jwk.alg) {
+        throw new TypeError('missing "alg" (Algorithm) Parameter value');
+      }
+      if (alg !== void 0 && alg !== jwk.alg) {
+        throw new TypeError("JWK alg and alg option value mismatch");
+      }
+      return jwkToKey({ ...jwk, ext });
+    }
+    case "EC":
+    case "OKP":
+      return jwkToKey({ ...jwk, alg, ext });
+    default:
+      throw new JOSENotSupported('Unsupported "kty" (Key Type) Parameter value');
+  }
 }
 
 // node_modules/jose/dist/webapi/lib/validate_crit.js
@@ -35868,6 +36266,284 @@ var SignJWT = class {
   }
 };
 
+// node_modules/jose/dist/webapi/jwks/local.js
+function getKtyFromAlg(alg) {
+  switch (typeof alg === "string" && alg.slice(0, 2)) {
+    case "RS":
+    case "PS":
+      return "RSA";
+    case "ES":
+      return "EC";
+    case "Ed":
+      return "OKP";
+    case "ML":
+      return "AKP";
+    default:
+      throw new JOSENotSupported('Unsupported "alg" value for a JSON Web Key Set');
+  }
+}
+function isJWKSLike(jwks2) {
+  return jwks2 && typeof jwks2 === "object" && Array.isArray(jwks2.keys) && jwks2.keys.every(isJWKLike);
+}
+function isJWKLike(key) {
+  return isObject3(key);
+}
+var LocalJWKSet = class {
+  #jwks;
+  #cached = /* @__PURE__ */ new WeakMap();
+  constructor(jwks2) {
+    if (!isJWKSLike(jwks2)) {
+      throw new JWKSInvalid("JSON Web Key Set malformed");
+    }
+    this.#jwks = structuredClone(jwks2);
+  }
+  jwks() {
+    return this.#jwks;
+  }
+  async getKey(protectedHeader, token) {
+    const { alg, kid } = { ...protectedHeader, ...token?.header };
+    const kty = getKtyFromAlg(alg);
+    const candidates = this.#jwks.keys.filter((jwk2) => {
+      let candidate = kty === jwk2.kty;
+      if (candidate && typeof kid === "string") {
+        candidate = kid === jwk2.kid;
+      }
+      if (candidate && (typeof jwk2.alg === "string" || kty === "AKP")) {
+        candidate = alg === jwk2.alg;
+      }
+      if (candidate && typeof jwk2.use === "string") {
+        candidate = jwk2.use === "sig";
+      }
+      if (candidate && Array.isArray(jwk2.key_ops)) {
+        candidate = jwk2.key_ops.includes("verify");
+      }
+      if (candidate) {
+        switch (alg) {
+          case "ES256":
+            candidate = jwk2.crv === "P-256";
+            break;
+          case "ES384":
+            candidate = jwk2.crv === "P-384";
+            break;
+          case "ES512":
+            candidate = jwk2.crv === "P-521";
+            break;
+          case "Ed25519":
+          case "EdDSA":
+            candidate = jwk2.crv === "Ed25519";
+            break;
+        }
+      }
+      return candidate;
+    });
+    const { 0: jwk, length } = candidates;
+    if (length === 0) {
+      throw new JWKSNoMatchingKey();
+    }
+    if (length !== 1) {
+      const error48 = new JWKSMultipleMatchingKeys();
+      const _cached = this.#cached;
+      error48[Symbol.asyncIterator] = async function* () {
+        for (const jwk2 of candidates) {
+          try {
+            yield await importWithAlgCache(_cached, jwk2, alg);
+          } catch {
+          }
+        }
+      };
+      throw error48;
+    }
+    return importWithAlgCache(this.#cached, jwk, alg);
+  }
+};
+async function importWithAlgCache(cache2, jwk, alg) {
+  const cached2 = cache2.get(jwk) || cache2.set(jwk, {}).get(jwk);
+  if (cached2[alg] === void 0) {
+    const key = await importJWK({ ...jwk, ext: true }, alg);
+    if (key instanceof Uint8Array || key.type !== "public") {
+      throw new JWKSInvalid("JSON Web Key Set members must be public keys");
+    }
+    cached2[alg] = key;
+  }
+  return cached2[alg];
+}
+function createLocalJWKSet(jwks2) {
+  const set2 = new LocalJWKSet(jwks2);
+  const localJWKSet = async (protectedHeader, token) => set2.getKey(protectedHeader, token);
+  Object.defineProperties(localJWKSet, {
+    jwks: {
+      value: () => structuredClone(set2.jwks()),
+      enumerable: false,
+      configurable: false,
+      writable: false
+    }
+  });
+  return localJWKSet;
+}
+
+// node_modules/jose/dist/webapi/jwks/remote.js
+function isCloudflareWorkers() {
+  return typeof WebSocketPair !== "undefined" || typeof navigator !== "undefined" && navigator.userAgent === "Cloudflare-Workers" || typeof EdgeRuntime !== "undefined" && EdgeRuntime === "vercel";
+}
+var USER_AGENT;
+if (typeof navigator === "undefined" || !navigator.userAgent?.startsWith?.("Mozilla/5.0 ")) {
+  const NAME = "jose";
+  const VERSION = "v6.2.3";
+  USER_AGENT = `${NAME}/${VERSION}`;
+}
+var customFetch = /* @__PURE__ */ Symbol();
+async function fetchJwks(url2, headers, signal, fetchImpl = fetch) {
+  const response = await fetchImpl(url2, {
+    method: "GET",
+    signal,
+    redirect: "manual",
+    headers
+  }).catch((err) => {
+    if (err.name === "TimeoutError") {
+      throw new JWKSTimeout();
+    }
+    throw err;
+  });
+  if (response.status !== 200) {
+    throw new JOSEError("Expected 200 OK from the JSON Web Key Set HTTP response");
+  }
+  try {
+    return await response.json();
+  } catch {
+    throw new JOSEError("Failed to parse the JSON Web Key Set HTTP response as JSON");
+  }
+}
+var jwksCache = /* @__PURE__ */ Symbol();
+function isFreshJwksCache(input, cacheMaxAge) {
+  if (typeof input !== "object" || input === null) {
+    return false;
+  }
+  if (!("uat" in input) || typeof input.uat !== "number" || Date.now() - input.uat >= cacheMaxAge) {
+    return false;
+  }
+  if (!("jwks" in input) || !isObject3(input.jwks) || !Array.isArray(input.jwks.keys) || !Array.prototype.every.call(input.jwks.keys, isObject3)) {
+    return false;
+  }
+  return true;
+}
+var RemoteJWKSet = class {
+  #url;
+  #timeoutDuration;
+  #cooldownDuration;
+  #cacheMaxAge;
+  #jwksTimestamp;
+  #pendingFetch;
+  #headers;
+  #customFetch;
+  #local;
+  #cache;
+  constructor(url2, options) {
+    if (!(url2 instanceof URL)) {
+      throw new TypeError("url must be an instance of URL");
+    }
+    this.#url = new URL(url2.href);
+    this.#timeoutDuration = typeof options?.timeoutDuration === "number" ? options?.timeoutDuration : 5e3;
+    this.#cooldownDuration = typeof options?.cooldownDuration === "number" ? options?.cooldownDuration : 3e4;
+    this.#cacheMaxAge = typeof options?.cacheMaxAge === "number" ? options?.cacheMaxAge : 6e5;
+    this.#headers = new Headers(options?.headers);
+    if (USER_AGENT && !this.#headers.has("User-Agent")) {
+      this.#headers.set("User-Agent", USER_AGENT);
+    }
+    if (!this.#headers.has("accept")) {
+      this.#headers.set("accept", "application/json");
+      this.#headers.append("accept", "application/jwk-set+json");
+    }
+    this.#customFetch = options?.[customFetch];
+    if (options?.[jwksCache] !== void 0) {
+      this.#cache = options?.[jwksCache];
+      if (isFreshJwksCache(options?.[jwksCache], this.#cacheMaxAge)) {
+        this.#jwksTimestamp = this.#cache.uat;
+        this.#local = createLocalJWKSet(this.#cache.jwks);
+      }
+    }
+  }
+  pendingFetch() {
+    return !!this.#pendingFetch;
+  }
+  coolingDown() {
+    return typeof this.#jwksTimestamp === "number" ? Date.now() < this.#jwksTimestamp + this.#cooldownDuration : false;
+  }
+  fresh() {
+    return typeof this.#jwksTimestamp === "number" ? Date.now() < this.#jwksTimestamp + this.#cacheMaxAge : false;
+  }
+  jwks() {
+    return this.#local?.jwks();
+  }
+  async getKey(protectedHeader, token) {
+    if (!this.#local || !this.fresh()) {
+      await this.reload();
+    }
+    try {
+      return await this.#local(protectedHeader, token);
+    } catch (err) {
+      if (err instanceof JWKSNoMatchingKey) {
+        if (this.coolingDown() === false) {
+          await this.reload();
+          return this.#local(protectedHeader, token);
+        }
+      }
+      throw err;
+    }
+  }
+  async reload() {
+    if (this.#pendingFetch && isCloudflareWorkers()) {
+      this.#pendingFetch = void 0;
+    }
+    this.#pendingFetch ||= fetchJwks(this.#url.href, this.#headers, AbortSignal.timeout(this.#timeoutDuration), this.#customFetch).then((json3) => {
+      this.#local = createLocalJWKSet(json3);
+      if (this.#cache) {
+        this.#cache.uat = Date.now();
+        this.#cache.jwks = json3;
+      }
+      this.#jwksTimestamp = Date.now();
+      this.#pendingFetch = void 0;
+    }).catch((err) => {
+      this.#pendingFetch = void 0;
+      throw err;
+    });
+    await this.#pendingFetch;
+  }
+};
+function createRemoteJWKSet(url2, options) {
+  const set2 = new RemoteJWKSet(url2, options);
+  const remoteJWKSet = async (protectedHeader, token) => set2.getKey(protectedHeader, token);
+  Object.defineProperties(remoteJWKSet, {
+    coolingDown: {
+      get: () => set2.coolingDown(),
+      enumerable: true,
+      configurable: false
+    },
+    fresh: {
+      get: () => set2.fresh(),
+      enumerable: true,
+      configurable: false
+    },
+    reload: {
+      value: () => set2.reload(),
+      enumerable: true,
+      configurable: false,
+      writable: false
+    },
+    reloading: {
+      get: () => set2.pendingFetch(),
+      enumerable: true,
+      configurable: false
+    },
+    jwks: {
+      value: () => set2.jwks(),
+      enumerable: true,
+      configurable: false,
+      writable: false
+    }
+  });
+  return remoteJWKSet;
+}
+
 // api/routers/user.ts
 var JWT_SECRET = new TextEncoder().encode(
   process.env.JWT_SECRET || "mingli-fate-secret-key-2024"
@@ -36153,22 +36829,508 @@ var recordRouter = createRouter({
   })
 });
 
+// api/routers/apiKey.ts
+var apiKeyRouter = createRouter({
+  // 保存用户的API密钥
+  save: publicQuery.input(
+    external_exports.object({
+      key: external_exports.string().min(10),
+      provider: external_exports.string().default("siliconflow"),
+      token: external_exports.string()
+    })
+  ).mutation(async ({ input }) => {
+    const payload = await verifyToken(input.token);
+    if (!payload) throw new Error("\u8BF7\u5148\u767B\u5F55");
+    const db = getDb();
+    await db.update(apiKeys).set({ isActive: 0 }).where(eq(apiKeys.userId, payload.userId));
+    const result = await db.insert(apiKeys).values({
+      userId: payload.userId,
+      provider: input.provider,
+      key: input.key,
+      isActive: 1
+    }).returning({ id: apiKeys.id });
+    return { id: result[0].id };
+  }),
+  // 获取用户当前激活的API密钥
+  myKey: publicQuery.input(external_exports.object({ token: external_exports.string() })).query(async ({ input }) => {
+    const payload = await verifyToken(input.token);
+    if (!payload) return null;
+    const db = getDb();
+    const keys = await db.select().from(apiKeys).where(and(
+      eq(apiKeys.userId, payload.userId),
+      eq(apiKeys.isActive, 1)
+    )).limit(1);
+    if (keys.length === 0) return null;
+    const key = keys[0].key;
+    return {
+      id: keys[0].id,
+      provider: keys[0].provider,
+      prefix: key.slice(0, 8) + "..." + key.slice(-4),
+      hasKey: true
+    };
+  }),
+  // 测试API密钥是否可用
+  test: publicQuery.input(external_exports.object({ key: external_exports.string() })).mutation(async ({ input }) => {
+    try {
+      const resp = await fetch("https://api.siliconflow.cn/v1/models", {
+        headers: {
+          Authorization: `Bearer ${input.key}`
+        }
+      });
+      if (resp.ok) {
+        return { valid: true, message: "API\u5BC6\u94A5\u9A8C\u8BC1\u6210\u529F" };
+      } else {
+        return { valid: false, message: "API\u5BC6\u94A5\u65E0\u6548\u6216\u5DF2\u8FC7\u671F" };
+      }
+    } catch {
+      return { valid: false, message: "\u7F51\u7EDC\u9519\u8BEF\uFF0C\u65E0\u6CD5\u9A8C\u8BC1" };
+    }
+  }),
+  // 删除用户的API密钥
+  delete: publicQuery.input(external_exports.object({ token: external_exports.string() })).mutation(async ({ input }) => {
+    const payload = await verifyToken(input.token);
+    if (!payload) throw new Error("\u8BF7\u5148\u767B\u5F55");
+    const db = getDb();
+    await db.delete(apiKeys).where(eq(apiKeys.userId, payload.userId));
+    return { ok: true };
+  })
+});
+
+// api/routers/aiChat.ts
+var aiChatRouter = createRouter({
+  // 保存AI聊天记录
+  save: publicQuery.input(
+    external_exports.object({
+      toolType: external_exports.string(),
+      recordId: external_exports.number().optional(),
+      messages: external_exports.array(external_exports.any()),
+      token: external_exports.string()
+    })
+  ).mutation(async ({ input }) => {
+    const payload = await verifyToken(input.token);
+    if (!payload) throw new Error("\u8BF7\u5148\u767B\u5F55");
+    const db = getDb();
+    const result = await db.insert(aiChats).values({
+      userId: payload.userId,
+      toolType: input.toolType,
+      recordId: input.recordId || null,
+      messages: input.messages
+    }).returning({ id: aiChats.id });
+    return { id: result[0].id };
+  }),
+  // 获取某工具的AI聊天记录
+  myChats: publicQuery.input(
+    external_exports.object({
+      toolType: external_exports.string().optional(),
+      token: external_exports.string()
+    })
+  ).query(async ({ input }) => {
+    const payload = await verifyToken(input.token);
+    if (!payload) return [];
+    const db = getDb();
+    let query = db.select().from(aiChats).where(eq(aiChats.userId, payload.userId));
+    const results = await query.orderBy(desc(aiChats.createdAt));
+    return results.map((r) => ({
+      id: r.id,
+      toolType: r.toolType,
+      recordId: r.recordId,
+      messages: r.messages,
+      createdAt: r.createdAt
+    }));
+  }),
+  // 删除AI聊天记录
+  delete: publicQuery.input(external_exports.object({ id: external_exports.number(), token: external_exports.string() })).mutation(async ({ input }) => {
+    const payload = await verifyToken(input.token);
+    if (!payload) throw new Error("\u8BF7\u5148\u767B\u5F55");
+    const db = getDb();
+    await db.delete(aiChats).where(eq(aiChats.id, input.id));
+    return { ok: true };
+  })
+});
+
+// api/routers/mianxiang.ts
+var mianxiangRouter = createRouter({
+  // 保存面相解析记录
+  save: publicQuery.input(
+    external_exports.object({
+      mode: external_exports.string(),
+      messages: external_exports.array(external_exports.any()),
+      token: external_exports.string()
+    })
+  ).mutation(async ({ input }) => {
+    const payload = await verifyToken(input.token);
+    if (!payload) throw new Error("\u8BF7\u5148\u767B\u5F55");
+    const db = getDb();
+    const result = await db.insert(mianxiangRecords).values({
+      userId: payload.userId,
+      mode: input.mode,
+      messages: input.messages
+    }).returning({ id: mianxiangRecords.id });
+    return { id: result[0].id };
+  }),
+  // 获取我的面相解析记录
+  myRecords: publicQuery.input(external_exports.object({ token: external_exports.string() })).query(async ({ input }) => {
+    const payload = await verifyToken(input.token);
+    if (!payload) return [];
+    const db = getDb();
+    const results = await db.select().from(mianxiangRecords).where(eq(mianxiangRecords.userId, payload.userId)).orderBy(desc(mianxiangRecords.createdAt));
+    return results.map((r) => ({
+      id: r.id,
+      mode: r.mode,
+      messages: r.messages,
+      createdAt: r.createdAt
+    }));
+  }),
+  // 删除面相解析记录
+  delete: publicQuery.input(external_exports.object({ id: external_exports.number(), token: external_exports.string() })).mutation(async ({ input }) => {
+    const payload = await verifyToken(input.token);
+    if (!payload) throw new Error("\u8BF7\u5148\u767B\u5F55");
+    const db = getDb();
+    await db.delete(mianxiangRecords).where(eq(mianxiangRecords.id, input.id));
+    return { ok: true };
+  })
+});
+
+// api/auth-router.ts
+var cookie = __toESM(require_dist2(), 1);
+
+// api/lib/cookies.ts
+function isLocalhost(headers) {
+  const host = headers.get("host") || "";
+  return host.startsWith("localhost:") || host.startsWith("127.0.0.1:");
+}
+function getSessionCookieOptions(headers) {
+  const localhost = isLocalhost(headers);
+  return {
+    httpOnly: true,
+    path: "/",
+    sameSite: localhost ? "Lax" : "None",
+    secure: !localhost
+  };
+}
+
+// api/auth-router.ts
+var authRouter = createRouter({
+  me: authedQuery.query((opts) => opts.ctx.user),
+  logout: authedQuery.mutation(async ({ ctx }) => {
+    const opts = getSessionCookieOptions(ctx.req.headers);
+    ctx.resHeaders.append(
+      "set-cookie",
+      cookie.serialize(Session.cookieName, "", {
+        httpOnly: opts.httpOnly,
+        path: opts.path,
+        sameSite: opts.sameSite?.toLowerCase(),
+        secure: opts.secure,
+        maxAge: 0
+      })
+    );
+    return { success: true };
+  })
+});
+
 // api/router.ts
 var appRouter = createRouter({
   ping: publicQuery.query(() => ({ ok: true, ts: Date.now() })),
+  auth: authRouter,
   user: userRouter,
   community: communityRouter,
-  record: recordRouter
+  record: recordRouter,
+  apiKey: apiKeyRouter,
+  aiChat: aiChatRouter,
+  mianxiang: mianxiangRouter
 });
+
+// node_modules/hono/dist/utils/cookie.js
+var validCookieNameRegEx = /^[\w!#$%&'*.^`|~+-]+$/;
+var _serialize = (name, value, opt = {}) => {
+  if (!validCookieNameRegEx.test(name)) {
+    throw new Error("Invalid cookie name");
+  }
+  let cookie3 = `${name}=${value}`;
+  if (name.startsWith("__Secure-") && !opt.secure) {
+    throw new Error("__Secure- Cookie must have Secure attributes");
+  }
+  if (name.startsWith("__Host-")) {
+    if (!opt.secure) {
+      throw new Error("__Host- Cookie must have Secure attributes");
+    }
+    if (opt.path !== "/") {
+      throw new Error('__Host- Cookie must have Path attributes with "/"');
+    }
+    if (opt.domain) {
+      throw new Error("__Host- Cookie must not have Domain attributes");
+    }
+  }
+  for (const key of ["domain", "path", "sameSite", "priority"]) {
+    if (opt[key] && /[;\r\n]/.test(opt[key])) {
+      throw new Error(`${key} must not contain ";", "\\r", or "\\n"`);
+    }
+  }
+  if (opt && typeof opt.maxAge === "number" && opt.maxAge >= 0) {
+    if (opt.maxAge > 3456e4) {
+      throw new Error(
+        "Cookies Max-Age SHOULD NOT be greater than 400 days (34560000 seconds) in duration."
+      );
+    }
+    cookie3 += `; Max-Age=${opt.maxAge | 0}`;
+  }
+  if (opt.domain && opt.prefix !== "host") {
+    cookie3 += `; Domain=${opt.domain}`;
+  }
+  if (opt.path) {
+    cookie3 += `; Path=${opt.path}`;
+  }
+  if (opt.expires) {
+    if (opt.expires.getTime() - Date.now() > 3456e7) {
+      throw new Error(
+        "Cookies Expires SHOULD NOT be greater than 400 days (34560000 seconds) in the future."
+      );
+    }
+    cookie3 += `; Expires=${opt.expires.toUTCString()}`;
+  }
+  if (opt.httpOnly) {
+    cookie3 += "; HttpOnly";
+  }
+  if (opt.secure) {
+    cookie3 += "; Secure";
+  }
+  if (opt.sameSite) {
+    cookie3 += `; SameSite=${opt.sameSite.charAt(0).toUpperCase() + opt.sameSite.slice(1)}`;
+  }
+  if (opt.priority) {
+    cookie3 += `; Priority=${opt.priority.charAt(0).toUpperCase() + opt.priority.slice(1)}`;
+  }
+  if (opt.partitioned) {
+    if (!opt.secure) {
+      throw new Error("Partitioned Cookie must have Secure attributes");
+    }
+    cookie3 += "; Partitioned";
+  }
+  return cookie3;
+};
+var serialize3 = (name, value, opt) => {
+  value = encodeURIComponent(value);
+  return _serialize(name, value, opt);
+};
+
+// node_modules/hono/dist/helper/cookie/index.js
+var generateCookie = (name, value, opt) => {
+  let cookie3;
+  if (opt?.prefix === "secure") {
+    cookie3 = serialize3("__Secure-" + name, value, { path: "/", ...opt, secure: true });
+  } else if (opt?.prefix === "host") {
+    cookie3 = serialize3("__Host-" + name, value, {
+      ...opt,
+      path: "/",
+      secure: true,
+      domain: void 0
+    });
+  } else {
+    cookie3 = serialize3(name, value, { path: "/", ...opt });
+  }
+  return cookie3;
+};
+var setCookie = (c, name, value, opt) => {
+  const cookie3 = generateCookie(name, value, opt);
+  c.header("Set-Cookie", cookie3, { append: true });
+};
+
+// api/kimi/auth.ts
+var cookie2 = __toESM(require_dist2(), 1);
+
+// contracts/errors.ts
+function appError(status, message2) {
+  return { tag: "app_error", status, message: message2 };
+}
+var Errors = {
+  badRequest: (msg) => appError(400, msg),
+  unauthorized: (msg) => appError(401, msg),
+  forbidden: (msg) => appError(403, msg),
+  notFound: (msg) => appError(404, msg),
+  internal: (msg) => appError(500, msg)
+};
+
+// api/kimi/session.ts
+var JWT_ALG = "HS256";
+async function signSessionToken(payload) {
+  const secret = new TextEncoder().encode(env.appSecret);
+  return new SignJWT(payload).setProtectedHeader({ alg: JWT_ALG }).setIssuedAt().setExpirationTime("1 year").sign(secret);
+}
+async function verifySessionToken(token) {
+  if (!token) {
+    console.warn("[session] No token provided for verification.");
+    return null;
+  }
+  try {
+    const secret = new TextEncoder().encode(env.appSecret);
+    const { payload } = await jwtVerify(token, secret, {
+      algorithms: [JWT_ALG]
+    });
+    const { unionId, clientId } = payload;
+    if (!unionId || !clientId) {
+      console.warn("[session] JWT payload missing required fields.");
+      return null;
+    }
+    return { unionId, clientId };
+  } catch (error48) {
+    console.warn("[session] JWT verification failed:", error48);
+    return null;
+  }
+}
+
+// api/kimi/platform.ts
+async function kimiRequest(path2, token, init) {
+  const resp = await fetch(`${env.kimiOpenUrl}${path2}`, {
+    ...init,
+    headers: {
+      Accept: "application/json",
+      Authorization: `Bearer ${token}`,
+      ...init?.headers
+    }
+  });
+  if (!resp.ok) {
+    const text2 = await resp.text();
+    console.warn(
+      `[kimi] Request to ${path2} failed (${resp.status}): ${text2}`
+    );
+    return null;
+  }
+  return resp.json();
+}
+var users2 = {
+  getProfile: (token) => kimiRequest("/v1/users/me/profile", token)
+};
+
+// api/queries/users.ts
+async function findUserByUnionId(unionId) {
+  const rows = await getDb().select().from(users).where(eq(users.unionId, unionId)).limit(1);
+  return rows.at(0);
+}
+async function upsertUser(data) {
+  const values = { ...data };
+  const updateSet = {
+    lastSignInAt: /* @__PURE__ */ new Date(),
+    ...data
+  };
+  if (values.role === void 0 && values.unionId && values.unionId === env.ownerUnionId) {
+    values.role = "admin";
+    updateSet.role = "admin";
+  }
+  await getDb().insert(users).values(values).onDuplicateKeyUpdate({ set: updateSet });
+}
+
+// api/kimi/auth.ts
+async function exchangeAuthCode(code, redirectUri) {
+  const body = new URLSearchParams({
+    grant_type: "authorization_code",
+    code,
+    client_id: env.appId,
+    redirect_uri: redirectUri,
+    client_secret: env.appSecret
+  });
+  const resp = await fetch(`${env.kimiAuthUrl}/api/oauth/token`, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: body.toString()
+  });
+  if (!resp.ok) {
+    const text2 = await resp.text();
+    throw new Error(`Token exchange failed (${resp.status}): ${text2}`);
+  }
+  return resp.json();
+}
+var jwks = createRemoteJWKSet(
+  new URL(`${env.kimiAuthUrl}/api/.well-known/jwks.json`)
+);
+async function verifyAccessToken(accessToken) {
+  const { payload } = await jwtVerify(accessToken, jwks);
+  const userId = payload.user_id;
+  const clientId = payload.client_id;
+  if (!userId) {
+    throw new Error("user_id missing from access token");
+  }
+  return { userId, clientId };
+}
+async function authenticateRequest(headers) {
+  const cookies = cookie2.parse(headers.get("cookie") || "");
+  const token = cookies[Session.cookieName];
+  if (!token) {
+    console.warn("[auth] No session cookie found in request.");
+    throw Errors.forbidden("Invalid authentication token.");
+  }
+  const claim = await verifySessionToken(token);
+  if (!claim) {
+    throw Errors.forbidden("Invalid authentication token.");
+  }
+  const user = await findUserByUnionId(claim.unionId);
+  if (!user) {
+    throw Errors.forbidden("User not found. Please re-login.");
+  }
+  return user;
+}
+function createOAuthCallbackHandler() {
+  return async (c) => {
+    const code = c.req.query("code");
+    const state = c.req.query("state");
+    const error48 = c.req.query("error");
+    const errorDescription = c.req.query("error_description");
+    if (error48) {
+      if (error48 === "access_denied") {
+        return c.redirect("/", 302);
+      }
+      return c.json(
+        { error: error48, error_description: errorDescription },
+        400
+      );
+    }
+    if (!code || !state) {
+      return c.json({ error: "code and state are required" }, 400);
+    }
+    try {
+      const redirectUri = atob(state);
+      const tokenResp = await exchangeAuthCode(code, redirectUri);
+      const { userId } = await verifyAccessToken(tokenResp.access_token);
+      const userProfile = await users2.getProfile(tokenResp.access_token);
+      if (!userProfile) {
+        throw new Error("Failed to fetch user profile from Kimi Open");
+      }
+      await upsertUser({
+        unionId: userId,
+        name: userProfile.name,
+        avatar: userProfile.avatar_url,
+        lastSignInAt: /* @__PURE__ */ new Date()
+      });
+      const token = await signSessionToken({
+        unionId: userId,
+        clientId: env.appId
+      });
+      const cookieOpts = getSessionCookieOptions(c.req.raw.headers);
+      setCookie(c, Session.cookieName, token, {
+        ...cookieOpts,
+        maxAge: Session.maxAgeMs / 1e3
+      });
+      return c.redirect("/", 302);
+    } catch (error49) {
+      console.error("[OAuth] Callback failed", error49);
+      return c.json({ error: "OAuth callback failed" }, 500);
+    }
+  };
+}
 
 // api/context.ts
 async function createContext(opts) {
-  return { req: opts.req, resHeaders: opts.resHeaders };
+  const ctx = { req: opts.req, resHeaders: opts.resHeaders };
+  try {
+    ctx.user = await authenticateRequest(opts.req.headers);
+  } catch {
+  }
+  return ctx;
 }
 
 // api/boot.ts
 var app = new Hono2();
 app.use(bodyLimit({ maxSize: 50 * 1024 * 1024 }));
+app.get(Paths.oauthCallback, createOAuthCallbackHandler());
 app.use("/api/trpc/*", async (c) => {
   return fetchRequestHandler({
     endpoint: "/api/trpc",
